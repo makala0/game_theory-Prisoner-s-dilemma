@@ -1,5 +1,8 @@
 from strategies import *
 
+strategies = ["TitForTat", "AlwaysDefect", "AlwaysCooperate", "Trigger", "Random", "SecondByChampion",
+              "Prober", "TitFor2Tat", "MyStrategy"]
+
 
 def choose_strategy(shortcut, history):
     """
@@ -40,32 +43,24 @@ def calculate_points(first_strategy_decision, second_strategy_decision):
 
 if __name__ == '__main__':
 
-    strategies = ["TitForTat", "AlwaysDefect", "AlwaysCooperate", "Trigger", "Random", "SecondByChampion",
-                  "Prober", "TitFor2Tat", "MyStrategy"]
-    h = []
-    points = {
-        "TitForTat": 0,
-        "AlwaysDefect": 0,
-        "AlwaysCooperate": 0,
-        "Trigger": 0,
-        "Random": 0,
-        "SecondByChampion": 0,
-        "Prober": 0,
-        "TitFor2Tat": 0,
-        "MyStrategy": 0
-    }
+    strategy_points = dict.fromkeys(strategies, 0)  # using dictionary for saving the points
+
     player1_history = []
     player2_history = []
+    rounds = 200
 
     for player1 in strategies:
         for player2 in strategies:
+            # history resets every round
             player1_history = []
-            for iterations in range(200):
+            player2_history = []
+            for iterations in range(rounds):
                 player1_points, player2_points = calculate_points(choose_strategy(player1, player2_history),
                                                                   choose_strategy(player2, player1_history))
                 player1_history.append(choose_strategy(player1, player2_history))
+                player2_history.append(choose_strategy(player2, player1_history))
 
-                points[player1] += player1_points
+                strategy_points[player1] += player1_points
 
-    for key in points:
-        print(key, "has average of", points[key]/200, "points.")
+    for key in strategy_points:
+        print(key, "strategy has average of", strategy_points[key]/rounds, "points.")
